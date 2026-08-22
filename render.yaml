@@ -1,0 +1,61 @@
+services:
+  - type: web
+    name: agrireg-app
+    runtime: image
+    image:
+      # Replace this URL if you decide to rename the Docker image package
+      url: ghcr.io/lhackyup/agrireg:latest
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: APP_ENV
+        value: production
+
+      # Database - Automatically linked to the database defined below
+      - key: DB_HOST
+        fromDatabase:
+          name: agrireg-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: agrireg-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: agrireg-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: agrireg-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: agrireg-db
+          property: database
+
+      # S3 / Cloudflare R2 Storage (Recommended for attachments)
+      # Render will prompt the user to fill in these values during deployment.
+      # If not used, these fields can be left blank (but uploaded files will be lost on restart).
+      - key: STORAGE_PROVIDER
+        value: s3
+      - key: STORAGE_S3_BUCKET
+        sync: false
+      - key: STORAGE_S3_ACCESS_KEY_ID
+        sync: false
+      - key: STORAGE_S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: STORAGE_S3_REGION
+        sync: false
+      - key: STORAGE_S3_ENDPOINT
+        sync: false
+      - key: STORAGE_S3_PUBLIC_URL
+        sync: false
+      - key: STORAGE_S3_FORCE_PATH_STYLE
+        value: "true"
+
+databases:
+  - name: agrireg-db
+    plan: free
+    databaseName: agrireg
+    user: agrireg
